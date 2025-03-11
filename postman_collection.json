@@ -1,0 +1,386 @@
+{
+    "info": {
+        "name": "Buildy API",
+        "description": "API collection for Buildy project user management system",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Auth",
+            "description": "Authentication endpoints",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "login"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"phone\": \"998901234567\",\n    \"password\": \"your_password_here\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "description": "Login with phone number and password"
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/login"
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "body": {
+                                "success": true,
+                                "data": {
+                                    "user": {
+                                        "id": 1,
+                                        "first_name": "John",
+                                        "last_name": "Doe",
+                                        "phone": "998901234567",
+                                        "status": "active",
+                                        "roles": ["admin"]
+                                    },
+                                    "token": "1|abcdef...",
+                                    "token_type": "Bearer"
+                                },
+                                "message": "Muvaffaqiyatli login qilindi"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "logout"]
+                        },
+                        "description": "Logout and revoke the current token"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admins",
+            "description": "Admin management endpoints",
+            "item": [
+                {
+                    "name": "Get All Admins",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/admins",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "admins"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number for pagination"
+                                }
+                            ]
+                        },
+                        "description": "Get list of all admins with pagination (10 per page). Requires 'view admins' permission."
+                    }
+                },
+                {
+                    "name": "Get Single Admin",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/admins/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "admins", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Admin ID"
+                                }
+                            ]
+                        },
+                        "description": "Get details of a specific admin. Requires 'view admins' permission."
+                    }
+                },
+                {
+                    "name": "Create Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/admins",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "admins"]
+                        },
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "first_name",
+                                    "value": "John",
+                                    "type": "text",
+                                    "description": "Ism (majburiy)"
+                                },
+                                {
+                                    "key": "last_name",
+                                    "value": "Doe",
+                                    "type": "text",
+                                    "description": "Familiya (majburiy)"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "998901234567",
+                                    "type": "text",
+                                    "description": "Telefon raqam (unique, majburiy)"
+                                },
+                                {
+                                    "key": "gender",
+                                    "value": "male",
+                                    "type": "text",
+                                    "description": "Jinsi (male/female, majburiy)"
+                                },
+                                {
+                                    "key": "position",
+                                    "value": "Senior Manager",
+                                    "type": "text",
+                                    "description": "Lavozimi (majburiy)"
+                                },
+                                {
+                                    "key": "work_type",
+                                    "value": "full_time",
+                                    "type": "text",
+                                    "description": "Ish turi (full_time/part_time, majburiy)"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "your_password_here",
+                                    "type": "text",
+                                    "description": "Parol (minimum 8 ta belgi, majburiy)"
+                                },
+                                {
+                                    "key": "password_confirmation",
+                                    "value": "your_password_here",
+                                    "type": "text",
+                                    "description": "Parolni tasdiqlash (majburiy)"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Profil rasmi (ixtiyoriy)"
+                                }
+                            ]
+                        },
+                        "description": "Yangi admin yaratish. 'create admins' ruxsati talab qilinadi."
+                    }
+                },
+                {
+                    "name": "Update Admin",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/admins/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "admins", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Admin ID"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "first_name",
+                                    "value": "John",
+                                    "type": "text",
+                                    "description": "Ism (majburiy)"
+                                },
+                                {
+                                    "key": "last_name",
+                                    "value": "Doe",
+                                    "type": "text",
+                                    "description": "Familiya (majburiy)"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "998901234567",
+                                    "type": "text",
+                                    "description": "Telefon raqam (unique, majburiy)"
+                                },
+                                {
+                                    "key": "gender",
+                                    "value": "male",
+                                    "type": "text",
+                                    "description": "Jinsi (male/female, majburiy)"
+                                },
+                                {
+                                    "key": "position",
+                                    "value": "Senior Manager",
+                                    "type": "text",
+                                    "description": "Lavozimi (majburiy)"
+                                },
+                                {
+                                    "key": "work_type",
+                                    "value": "full_time",
+                                    "type": "text",
+                                    "description": "Ish turi (full_time/part_time, majburiy)"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "new_password_here",
+                                    "type": "text",
+                                    "description": "Yangi parol (minimum 8 ta belgi, ixtiyoriy)"
+                                },
+                                {
+                                    "key": "password_confirmation",
+                                    "value": "new_password_here",
+                                    "type": "text",
+                                    "description": "Parolni tasdiqlash (parol kiritilgan bo'lsa majburiy)"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Yangi profil rasmi (ixtiyoriy)"
+                                }
+                            ]
+                        },
+                        "description": "Adminni tahrirlash. 'edit admins' ruxsati talab qilinadi."
+                    }
+                },
+                {
+                    "name": "Delete Admin",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/admins/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "admins", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Admin ID"
+                                }
+                            ]
+                        },
+                        "description": "Delete an admin. Requires 'delete admins' permission."
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "your_access_token_here",
+            "type": "string"
+        }
+    ]
+}
