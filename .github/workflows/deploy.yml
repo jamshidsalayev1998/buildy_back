@@ -36,6 +36,7 @@ jobs:
           script: |
             cd /var/www/buildy_back
             git config --global --add safe.directory /var/www/buildy_back
+            git reset --hard HEAD
             git pull origin main
             composer install --no-interaction --prefer-dist --optimize-autoloader
             php artisan migrate --force
