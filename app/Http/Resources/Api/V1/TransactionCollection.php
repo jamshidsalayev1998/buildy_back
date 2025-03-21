@@ -15,7 +15,7 @@ class TransactionCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection,
+            'data' => TransactionResource::collection($this->collection),
             'pagination' => [
                 'total' => $this->total(),
                 'count' => $this->count(),

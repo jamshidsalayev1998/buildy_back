@@ -23,8 +23,7 @@ class UpdateTransactionRequest extends FormRequest
     {
         return [
             'amount' => ['sometimes', 'required', 'numeric', 'min:0'],
-            'type' => ['sometimes', 'required', 'in:income,expense'],
-            'category_id' => ['sometimes', 'required', 'exists:categories,id'],
+            'transaction_category_id' => ['sometimes', 'required', 'exists:transaction_categories,id'],
             'description' => ['nullable', 'string', 'max:500'],
             'receipt_image' => ['nullable', 'image', 'max:5120']
         ];
@@ -36,10 +35,8 @@ class UpdateTransactionRequest extends FormRequest
             'amount.required' => 'Summa kiritilishi shart',
             'amount.numeric' => 'Summa son bo\'lishi kerak',
             'amount.min' => 'Summa 0 dan katta bo\'lishi kerak',
-            'type.required' => 'Turi kiritilishi shart',
-            'type.in' => 'Noto\'g\'ri tur tanlangan',
-            'category_id.required' => 'Kategoriya tanlanishi shart',
-            'category_id.exists' => 'Bunday kategoriya mavjud emas',
+            'transaction_category_id.required' => 'Kategoriya tanlanishi shart',
+            'transaction_category_id.exists' => 'Bunday kategoriya mavjud emas',
             'description.max' => 'Izoh 500 ta belgidan oshmasligi kerak',
             'receipt_image.image' => 'Fayl rasm formatida bo\'lishi kerak',
             'receipt_image.max' => 'Rasm hajmi 5MB dan oshmasligi kerak'

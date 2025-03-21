@@ -21,45 +21,111 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create permissions
         // only superadmin
-        Permission::create(['name' => 'view admins']);
-        Permission::create(['name' => 'create admins']);
-        Permission::create(['name' => 'edit admins']);
-        Permission::create(['name' => 'delete admins']);
+        if (!Permission::where('name', 'view admins')->exists()) {
+            Permission::create(['name' => 'view admins']);
+        }
+        if (!Permission::where('name', 'create admins')->exists()) {
+            Permission::create(['name' => 'create admins']);
+        }
+        if (!Permission::where('name', 'edit admins')->exists()) {
+            Permission::create(['name' => 'edit admins']);
+        }
+        if (!Permission::where('name', 'delete admins')->exists()) {
+            Permission::create(['name' => 'delete admins']);
+        }
 
         // only superadmin and admin
-        Permission::create(['name' => 'view managers']);
-        Permission::create(['name' => 'create managers']);
-        Permission::create(['name' => 'edit managers']);
-        Permission::create(['name' => 'delete managers']);
+        if (!Permission::where('name', 'view managers')->exists()) {
+            Permission::create(['name' => 'view managers']);
+        }
+        if (!Permission::where('name', 'create managers')->exists()) {
+            Permission::create(['name' => 'create managers']);
+        }
+        if (!Permission::where('name', 'edit managers')->exists()) {
+            Permission::create(['name' => 'edit managers']);
+        }
+        if (!Permission::where('name', 'delete managers')->exists()) {
+            Permission::create(['name' => 'delete managers']);
+        }
 
         // only superadmin and admin and manager
-        Permission::create(['name' => 'view planners']);
-        Permission::create(['name' => 'create planners']);
-        Permission::create(['name' => 'edit planners']);
-        Permission::create(['name' => 'delete planners']);
+        if (!Permission::where('name', 'view planners')->exists()) {
+            Permission::create(['name' => 'view planners']);
+        }
+        if (!Permission::where('name', 'create planners')->exists()) {
+            Permission::create(['name' => 'create planners']);
+        }
+        if (!Permission::where('name', 'edit planners')->exists()) {
+            Permission::create(['name' => 'edit planners']);
+        }
+        if (!Permission::where('name', 'delete planners')->exists()) {
+            Permission::create(['name' => 'delete planners']);
+        }
 
         // only superadmin and admin and manager and planner
-        Permission::create(['name' => 'view employees']);
-        Permission::create(['name' => 'create employees']);
-        Permission::create(['name' => 'edit employees']);
-        Permission::create(['name' => 'delete employees']);
+        if (!Permission::where('name', 'view employees')->exists()) {
+            Permission::create(['name' => 'view employees']);
+        }
+        if (!Permission::where('name', 'create employees')->exists()) {
+            Permission::create(['name' => 'create employees']);
+        }
+        if (!Permission::where('name', 'edit employees')->exists()) {
+            Permission::create(['name' => 'edit employees']);
+        }
+        if (!Permission::where('name', 'delete employees')->exists()) {
+            Permission::create(['name' => 'delete employees']);
+        }
 
         // only superadmin
-        Permission::create(['name' => 'view companies']);
-        Permission::create(['name' => 'create companies']);
-        Permission::create(['name' => 'edit companies']);
-        Permission::create(['name' => 'delete companies']);
+        if (!Permission::where('name', 'view companies')->exists()) {
+            Permission::create(['name' => 'view companies']);
+        }
+        if (!Permission::where('name', 'create companies')->exists()) {
+            Permission::create(['name' => 'create companies']);
+        }
+        if (!Permission::where('name', 'edit companies')->exists()) {
+            Permission::create(['name' => 'edit companies']);
+        }
+        if (!Permission::where('name', 'delete companies')->exists()) {
+            Permission::create(['name' => 'delete companies']);
+        }
 
         // only admin
-        Permission::create(['name' => 'view transaction categories']);
-        Permission::create(['name' => 'create transaction categories']);
-        Permission::create(['name' => 'edit transaction categories']);
-        Permission::create(['name' => 'delete transaction categories']);
+        if (!Permission::where('name', 'view transaction categories')->exists()) {
+            Permission::create(['name' => 'view transaction categories']);
+        }
+        if (!Permission::where('name', 'create transaction categories')->exists()) {
+            Permission::create(['name' => 'create transaction categories']);
+        }
+        if (!Permission::where('name', 'edit transaction categories')->exists()) {
+            Permission::create(['name' => 'edit transaction categories']);
+        }
+        if (!Permission::where('name', 'delete transaction categories')->exists()) {
+            Permission::create(['name' => 'delete transaction categories']);
+        }
+
+        // transactions
+        if (!Permission::where('name', 'view transactions')->exists()) {
+            Permission::create(['name' => 'view transactions']);
+        }
+        if (!Permission::where('name', 'create transactions')->exists()) {
+            Permission::create(['name' => 'create transactions']);
+        }
+        if (!Permission::where('name', 'edit transactions')->exists()) {
+            Permission::create(['name' => 'edit transactions']);
+        }
+        if (!Permission::where('name', 'delete transactions')->exists()) {
+            Permission::create(['name' => 'delete transactions']);
+        }
 
         // Create roles and assign permissions
 
         // SuperAdmin (Eng yuqori admin)
-        $superAdminRole = Role::create(['name' => 'superadmin']);
+        if (!Role::where('name', 'superadmin')->exists()) {
+            $superAdminRole = Role::create(['name' => 'superadmin']);
+        } else {
+            $superAdminRole = Role::where('name', 'superadmin')->first();
+        }
         $superAdminRole->givePermissionTo([
             'view admins',
             'create admins',
@@ -77,11 +143,18 @@ class RoleAndPermissionSeeder extends Seeder
             'view companies',
             'create companies',
             'edit companies',
-            'delete companies'
+            'delete companies',
+            'view transactions',
+            'edit transactions',
+            'delete transactions'
         ]);
 
         // Admin (Korxona egasi)
-        $adminRole = Role::create(['name' => 'admin']);
+        if (!Role::where('name', 'admin')->exists()) {
+            $adminRole = Role::create(['name' => 'admin']);
+        } else {
+            $adminRole = Role::where('name', 'admin')->first();
+        }
         $adminRole->givePermissionTo([
             'view managers',
             'create managers',
@@ -98,11 +171,19 @@ class RoleAndPermissionSeeder extends Seeder
             'view transaction categories',
             'create transaction categories',
             'edit transaction categories',
-            'delete transaction categories'
+            'delete transaction categories',
+            'view transactions',
+            'create transactions',
+            'edit transactions',
+            'delete transactions'
         ]);
 
         // Manager (Ish boshqaruvchi)
-        $managerRole = Role::create(['name' => 'manager']);
+        if (!Role::where('name', 'manager')->exists()) {
+            $managerRole = Role::create(['name' => 'manager']);
+        } else {
+            $managerRole = Role::where('name', 'manager')->first();
+        }
         $managerRole->givePermissionTo([
             'view planners',
             'create planners',
@@ -111,29 +192,47 @@ class RoleAndPermissionSeeder extends Seeder
             'view employees',
             'create employees',
             'edit employees',
-            'delete employees'
+            'delete employees',
+            'view transaction categories',
+            'view transactions',
+            'create transactions',
+            'edit transactions',
+            'delete transactions'
         ]);
 
         // Planner (Rejalashtiruvchi)
-        $plannerRole = Role::create(['name' => 'planner']);
+        if (!Role::where('name', 'planner')->exists()) {
+            $plannerRole = Role::create(['name' => 'planner']);
+        } else {
+            $plannerRole = Role::where('name', 'planner')->first();
+        }
         $plannerRole->givePermissionTo([
             'view employees',
             'create employees',
             'edit employees',
-            'delete employees'
+            'delete employees',
+            'view transactions',
+            'create transactions',
+            'edit transactions',
+            'delete transactions',
+            'view transaction categories',
         ]);
 
         // Employee (Oddiy xodim)
-        $employeeRole = Role::create(['name' => 'employee']);
-        $employeeRole->givePermissionTo([
-
-        ]);
+        if (!Role::where('name', 'employee')->exists()) {
+            $employeeRole = Role::create(['name' => 'employee']);
+        } else {
+            $employeeRole = Role::where('name', 'employee')->first();
+        }
+        $employeeRole->givePermissionTo([]);
 
         // Create default superadmin user
-        $user = User::create([
-            'phone' => '998000000000',
-            'password' => bcrypt('password'),
-        ]);
-        $user->assignRole('superadmin');
+        if (!User::where('phone', '998000000000')->exists()) {
+            $user = User::create([
+                'phone' => '998000000000',
+                'password' => bcrypt('password'),
+            ]);
+            $user->assignRole('superadmin');
+        }
     }
 }
