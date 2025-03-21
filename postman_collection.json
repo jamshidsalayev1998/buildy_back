@@ -369,6 +369,224 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Companies",
+            "description": "Company management endpoints",
+            "item": [
+                {
+                    "name": "Get All Companies",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/companies",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "companies"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number for pagination"
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "15",
+                                    "description": "Items per page"
+                                }
+                            ]
+                        },
+                        "description": "Get list of all companies with pagination (15 per page). Requires 'view companies' permission."
+                    }
+                },
+                {
+                    "name": "Get Single Company",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/companies/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "companies", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Company ID"
+                                }
+                            ]
+                        },
+                        "description": "Get details of a specific company. Requires 'view companies' permission."
+                    }
+                },
+                {
+                    "name": "Create Company",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/companies",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "companies"]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Company Name\",\n    \"address\": \"Company Address\",\n    \"phone\": \"998901234567\",\n    \"email\": \"company@example.com\",\n    \"description\": \"Company description\",\n    \"status\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "description": "Create a new company. Requires superadmin role."
+                    }
+                },
+                {
+                    "name": "Update Company",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/companies/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "companies", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Company ID"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Updated Company Name\",\n    \"address\": \"Updated Company Address\",\n    \"phone\": \"998901234567\",\n    \"email\": \"updated@example.com\",\n    \"description\": \"Updated company description\",\n    \"status\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "description": "Update an existing company. Requires superadmin role."
+                    }
+                },
+                {
+                    "name": "Delete Company",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/companies/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "companies", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Company ID"
+                                }
+                            ]
+                        },
+                        "description": "Soft delete a company. Requires superadmin role."
+                    }
+                },
+                {
+                    "name": "Restore Company",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/companies/:id/restore",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "companies", ":id", "restore"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "1",
+                                    "description": "Company ID"
+                                }
+                            ]
+                        },
+                        "description": "Restore a soft-deleted company. Requires superadmin role."
+                    }
+                }
+            ]
         }
     ],
     "variable": [

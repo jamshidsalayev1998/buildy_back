@@ -44,11 +44,41 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'edit employees']);
         Permission::create(['name' => 'delete employees']);
 
+        // only superadmin
+        Permission::create(['name' => 'view companies']);
+        Permission::create(['name' => 'create companies']);
+        Permission::create(['name' => 'edit companies']);
+        Permission::create(['name' => 'delete companies']);
+
+        // only admin
+        Permission::create(['name' => 'view transaction categories']);
+        Permission::create(['name' => 'create transaction categories']);
+        Permission::create(['name' => 'edit transaction categories']);
+        Permission::create(['name' => 'delete transaction categories']);
+
         // Create roles and assign permissions
 
         // SuperAdmin (Eng yuqori admin)
         $superAdminRole = Role::create(['name' => 'superadmin']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        $superAdminRole->givePermissionTo([
+            'view admins',
+            'create admins',
+            'edit admins',
+            'delete admins',
+            'view managers',
+            'edit managers',
+            'delete managers',
+            'view planners',
+            'edit planners',
+            'delete planners',
+            'view employees',
+            'edit employees',
+            'delete employees',
+            'view companies',
+            'create companies',
+            'edit companies',
+            'delete companies'
+        ]);
 
         // Admin (Korxona egasi)
         $adminRole = Role::create(['name' => 'admin']);
@@ -64,7 +94,11 @@ class RoleAndPermissionSeeder extends Seeder
             'view employees',
             'create employees',
             'edit employees',
-            'delete employees'
+            'delete employees',
+            'view transaction categories',
+            'create transaction categories',
+            'edit transaction categories',
+            'delete transaction categories'
         ]);
 
         // Manager (Ish boshqaruvchi)

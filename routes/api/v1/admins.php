@@ -21,12 +21,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
             ->name('admins.store');
 
         // Update admin
-        Route::patch('/{id}', [AdminController::class, 'update'])
+        Route::patch('/{admin}', [AdminController::class, 'update'])
             ->middleware('permission:edit admins')
             ->name('admins.update');
 
         // Delete admin
-        Route::delete('/{id}', [AdminController::class, 'destroy'])
+        Route::delete('/{admin}', [AdminController::class, 'destroy'])
             ->middleware('permission:delete admins')
             ->name('admins.destroy');
     });
