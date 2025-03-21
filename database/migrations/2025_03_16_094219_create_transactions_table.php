@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->decimal('amount', 15, 2);
             $table->enum('type', ['income', 'expense']);
-            $table->foreignId('transaction_category_id')->constrained('transaction_categories')->nullable()->onDelete('set null');
-            $table->foreignId('user_id')->constrained('users')->nullable()->onDelete('set null');
+            $table->foreignId('transaction_category_id')->constrained('transaction_categories')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->string('receipt_image_path')->nullable();
             $table->timestamps();
