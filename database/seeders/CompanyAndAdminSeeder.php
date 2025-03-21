@@ -97,7 +97,6 @@ class CompanyAndAdminSeeder extends Seeder
 
             $transactionCategory = TransactionCategory::create([
                 'name' => 'Test Transaction Category ' . $company->id,
-                'description' => 'Test transaction category',
                 'company_id' => $company->id,
                 'type' => 'EXPENSE'
             ]);
