@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\TransactionCategory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
@@ -92,6 +93,13 @@ class CompanyAndAdminSeeder extends Seeder
                 'monthly_salary' => 5000000,
                 'status' => 'active',
                 'notes' => 'Test admin'
+            ]);
+
+            $transactionCategory = TransactionCategory::create([
+                'name' => 'Test Transaction Category ' . $company->id,
+                'description' => 'Test transaction category',
+                'company_id' => $company->id,
+                'type' => 'EXPENSE'
             ]);
 
             // Login ma'lumotlarini faylga yozish

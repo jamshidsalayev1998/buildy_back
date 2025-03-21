@@ -22,13 +22,14 @@ class TransactionController extends Controller
     /**
      * Get all transactions with pagination
      */
-    public function index(): JsonResponse
+    public function index()
     {
         try {
             $transactions = Transaction::with(['user', 'transactionCategory'])
                 ->visibleToUser()
                 ->latest()
                 ->paginate(request('per_page', 15));
+                return $transactions;
 
             Log::info('Transactions list retrieved', [
                 'user_id' => auth()->id(),
@@ -122,7 +123,6 @@ class TransactionController extends Controller
                 'user_id' => auth()->id(),
                 'transaction_id' => $transaction->id,
                 'amount' => $transaction->amount,
-                'type' => $transaction->type
             ]);
 
             return response()->json([
@@ -161,6 +161,14 @@ class TransactionController extends Controller
             $this->authorize('update', $transaction);
 
             DB::beginTransaction();
+
+            Log::info('Update request data:', [
+                'all' => $request->all(),
+                'files' => $request->allFiles(),
+                'validated' => $request->validated(),
+                'hasFile' => $request->hasFile('receipt_image'),
+                'content_type' => $request->header('Content-Type')
+            ]);
 
             $data = $request->validated();
 

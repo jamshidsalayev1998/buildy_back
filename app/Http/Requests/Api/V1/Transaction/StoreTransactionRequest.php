@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1\Transaction;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTransactionRequest extends FormRequest
 {
@@ -23,8 +24,7 @@ class StoreTransactionRequest extends FormRequest
     {
         return [
             'amount' => ['required', 'numeric', 'min:0'],
-            'type' => ['required', 'in:income,expense'],
-            'transaction_category_id' => ['required', 'exists:transaction_categories,id'],
+            'transaction_category_id' => ['required', Rule::exists('transaction_categories', 'id')->whereNull('deleted_at')],
             'description' => ['nullable', 'string', 'max:500'],
             'receipt_image' => ['nullable', 'image', 'max:5120']
         ];
@@ -36,8 +36,6 @@ class StoreTransactionRequest extends FormRequest
             'amount.required' => 'Summa kiritilishi shart',
             'amount.numeric' => 'Summa son bo\'lishi kerak',
             'amount.min' => 'Summa 0 dan katta bo\'lishi kerak',
-            'type.required' => 'Turi kiritilishi shart',
-            'type.in' => 'Noto\'g\'ri tur tanlangan',
             'transaction_category_id.required' => 'Kategoriya tanlanishi shart',
             'transaction_category_id.exists' => 'Bunday kategoriya mavjud emas',
             'description.max' => 'Izoh 500 ta belgidan oshmasligi kerak',

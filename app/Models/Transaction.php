@@ -42,4 +42,9 @@ class Transaction extends Model
     {
         return $query->where('user_id', auth()->id());
     }
+
+    public function getReceiptUrlAttribute(): ?string
+    {
+        return $this->receipt_image_path ? asset('storage/' . $this->receipt_image_path) : null;
+    }
 }

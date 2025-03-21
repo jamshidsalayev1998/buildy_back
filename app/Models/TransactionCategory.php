@@ -14,7 +14,8 @@ class TransactionCategory extends Model
     protected $fillable = [
         'name',
         'type',
-        'company_id'
+        'company_id',
+        'status'
     ];
 
     protected $casts = [
