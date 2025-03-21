@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Admin extends Model
+class Manager extends Model
 {
     use HasFactory;
 
@@ -33,13 +33,28 @@ class Admin extends Model
         'monthly_salary' => 'decimal:2'
     ];
 
+    // Munosabatlar
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    // To'liq ismni olish uchun accessor
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->middle_name} {$this->last_name}");
+    }
+
+    public function scopeVisibleToUser($query)
+    {
+        if (auth()->user()->hasRole('admin')) {
+            $query->where('company_id', auth()->user()->admin->company_id);
+        }
+        return $query;
     }
 }

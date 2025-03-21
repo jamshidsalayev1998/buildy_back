@@ -10,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Throwable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Auth\Access\AuthorizationException;
+
 class Handler extends ExceptionHandler
 {
     use ApiResponse;
@@ -63,6 +65,20 @@ class Handler extends ExceptionHandler
                     return $this->errorResponse(
                         'Ma\'lumot topilmadi',
                         404
+                    );
+                }
+
+                if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+                    return $this->errorResponse(
+                        'Ma\'lumot topilmadi',
+                        404
+                    );
+                }
+
+                if ($e instanceof AuthorizationException) {
+                    return $this->errorResponse(
+                        'Sizda bu amalni bajarish uchun ruxsat yo\'q',
+                        403
                     );
                 }
 

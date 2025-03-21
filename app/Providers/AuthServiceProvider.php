@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Models\Planner;
+use App\Policies\PlannerPolicy;
+use App\Models\Manager;
+use App\Policies\ManagerPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {

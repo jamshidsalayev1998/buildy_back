@@ -18,4 +18,11 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/v1/auth.php';
     require __DIR__ . '/api/v1/admins.php';
     require __DIR__ . '/api/v1/users.php';
+    require __DIR__ . '/api/v1/companies.php';
+    require __DIR__ . '/api/v1/managers.php';
+    require __DIR__ . '/api/v1/planners.php';
+    require __DIR__ . '/api/v1/transaction-categories.php';
+    require __DIR__ . '/api/v1/transactions.php';
 });
+
+
