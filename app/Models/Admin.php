@@ -25,7 +25,8 @@ class Admin extends Model
         'monthly_salary',
         'status',
         'notes',
-        'balance'
+        'balance',
+        'image'
     ];
 
     protected $casts = [

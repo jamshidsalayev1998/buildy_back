@@ -94,7 +94,7 @@ class EmployeeController extends Controller
     /**
      * Create new employee
      */
-    public function store(StoreEmployeeRequest $request): JsonResponse
+    public function store(StoreEmployeeRequest $request)
     {
         try {
             // $this->authorize('create', $request->position);
@@ -120,7 +120,7 @@ class EmployeeController extends Controller
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password)
             ]);
-
+            $path = null;
             if ($request->hasFile('image')) {
                 $path = $request->file('image')->store('users', 'public');
                 $user->image = $path;
