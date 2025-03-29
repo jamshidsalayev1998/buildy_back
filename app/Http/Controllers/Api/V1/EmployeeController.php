@@ -161,7 +161,7 @@ class EmployeeController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => new EmployeeResource($employee->load('user')),
-                'message' => 'Xodim muvaffaqiyatli yaratildi'
+                'message' => 'Xodim muvaffaqiyatli yaratildi uraa'
             ], 201);
         } catch (AuthorizationException $e) {
             Log::warning('Unauthorized employee creation attempt', [
