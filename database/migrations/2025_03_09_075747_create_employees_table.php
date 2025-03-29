@@ -23,7 +23,9 @@ return new class extends Migration
             $table->decimal('monthly_salary', 10, 2)->nullable();
             $table->enum('status', ['active', 'new', 'inactive'])->default('new');
             $table->text('notes')->nullable();
+            $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

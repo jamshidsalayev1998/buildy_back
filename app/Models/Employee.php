@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
-
-class Planner extends Model
+use Illuminate\Database\Eloquent\SoftDeletes;
+class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -66,6 +66,6 @@ class Planner extends Model
         if($user->hasRole('superadmin')) {
             return $query;
         }
-        return $query->where('company_id', $user->planner->company_id);
+        return $query->where('company_id', $user->employee->company_id);
     }
 }

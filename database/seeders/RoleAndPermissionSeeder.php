@@ -35,34 +35,6 @@ class RoleAndPermissionSeeder extends Seeder
         }
 
         // only superadmin and admin
-        if (!Permission::where('name', 'view managers')->exists()) {
-            Permission::create(['name' => 'view managers']);
-        }
-        if (!Permission::where('name', 'create managers')->exists()) {
-            Permission::create(['name' => 'create managers']);
-        }
-        if (!Permission::where('name', 'edit managers')->exists()) {
-            Permission::create(['name' => 'edit managers']);
-        }
-        if (!Permission::where('name', 'delete managers')->exists()) {
-            Permission::create(['name' => 'delete managers']);
-        }
-
-        // only superadmin and admin and manager
-        if (!Permission::where('name', 'view planners')->exists()) {
-            Permission::create(['name' => 'view planners']);
-        }
-        if (!Permission::where('name', 'create planners')->exists()) {
-            Permission::create(['name' => 'create planners']);
-        }
-        if (!Permission::where('name', 'edit planners')->exists()) {
-            Permission::create(['name' => 'edit planners']);
-        }
-        if (!Permission::where('name', 'delete planners')->exists()) {
-            Permission::create(['name' => 'delete planners']);
-        }
-
-        // only superadmin and admin and manager and planner
         if (!Permission::where('name', 'view employees')->exists()) {
             Permission::create(['name' => 'view employees']);
         }
@@ -74,6 +46,20 @@ class RoleAndPermissionSeeder extends Seeder
         }
         if (!Permission::where('name', 'delete employees')->exists()) {
             Permission::create(['name' => 'delete employees']);
+        }
+
+        // only superadmin and admin and manager
+        if (!Permission::where('name', 'view transactions')->exists()) {
+            Permission::create(['name' => 'view transactions']);
+        }
+        if (!Permission::where('name', 'create transactions')->exists()) {
+            Permission::create(['name' => 'create transactions']);
+        }
+        if (!Permission::where('name', 'edit transactions')->exists()) {
+            Permission::create(['name' => 'edit transactions']);
+        }
+        if (!Permission::where('name', 'delete transactions')->exists()) {
+            Permission::create(['name' => 'delete transactions']);
         }
 
         // only superadmin
@@ -104,91 +90,40 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::create(['name' => 'delete transaction categories']);
         }
 
-        // transactions
-        if (!Permission::where('name', 'view transactions')->exists()) {
-            Permission::create(['name' => 'view transactions']);
-        }
-        if (!Permission::where('name', 'create transactions')->exists()) {
-            Permission::create(['name' => 'create transactions']);
-        }
-        if (!Permission::where('name', 'edit transactions')->exists()) {
-            Permission::create(['name' => 'edit transactions']);
-        }
-        if (!Permission::where('name', 'delete transactions')->exists()) {
-            Permission::create(['name' => 'delete transactions']);
-        }
-
         // Create roles and assign permissions
-
-        // SuperAdmin (Eng yuqori admin)
+        // Superadmin
         if (!Role::where('name', 'superadmin')->exists()) {
-            $superAdminRole = Role::create(['name' => 'superadmin']);
+            $superadminRole = Role::create(['name' => 'superadmin']);
         } else {
-            $superAdminRole = Role::where('name', 'superadmin')->first();
+            $superadminRole = Role::where('name', 'superadmin')->first();
         }
-        $superAdminRole->givePermissionTo([
-            'view admins',
-            'create admins',
-            'edit admins',
-            'delete admins',
-            'view managers',
-            'edit managers',
-            'delete managers',
-            'view planners',
-            'edit planners',
-            'delete planners',
-            'view employees',
-            'edit employees',
-            'delete employees',
-            'view companies',
-            'create companies',
-            'edit companies',
-            'delete companies',
-            'view transactions',
-            'edit transactions',
-            'delete transactions'
-        ]);
+        $superadminRole->givePermissionTo(Permission::all());
 
-        // Admin (Korxona egasi)
+        // Admin
         if (!Role::where('name', 'admin')->exists()) {
             $adminRole = Role::create(['name' => 'admin']);
         } else {
             $adminRole = Role::where('name', 'admin')->first();
         }
         $adminRole->givePermissionTo([
-            'view managers',
-            'create managers',
-            'edit managers',
-            'delete managers',
-            'view planners',
-            'create planners',
-            'edit planners',
-            'delete planners',
             'view employees',
             'create employees',
             'edit employees',
             'delete employees',
             'view transaction categories',
-            'create transaction categories',
-            'edit transaction categories',
-            'delete transaction categories',
             'view transactions',
             'create transactions',
             'edit transactions',
             'delete transactions'
         ]);
 
-        // Manager (Ish boshqaruvchi)
+        // Manager
         if (!Role::where('name', 'manager')->exists()) {
             $managerRole = Role::create(['name' => 'manager']);
         } else {
             $managerRole = Role::where('name', 'manager')->first();
         }
         $managerRole->givePermissionTo([
-            'view planners',
-            'create planners',
-            'edit planners',
-            'delete planners',
             'view employees',
             'create employees',
             'edit employees',
@@ -200,7 +135,7 @@ class RoleAndPermissionSeeder extends Seeder
             'delete transactions'
         ]);
 
-        // Planner (Rejalashtiruvchi)
+        // Planner
         if (!Role::where('name', 'planner')->exists()) {
             $plannerRole = Role::create(['name' => 'planner']);
         } else {
@@ -218,7 +153,7 @@ class RoleAndPermissionSeeder extends Seeder
             'view transaction categories',
         ]);
 
-        // Employee (Oddiy xodim)
+        // Employee
         if (!Role::where('name', 'employee')->exists()) {
             $employeeRole = Role::create(['name' => 'employee']);
         } else {
