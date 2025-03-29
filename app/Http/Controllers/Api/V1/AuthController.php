@@ -96,6 +96,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
         $profile = null;
+        $permissions = $user->getAllPermissions();
         if($user->hasRole('superadmin')) {
             $profile = null;
         }
@@ -109,7 +110,8 @@ class AuthController extends Controller
         try {
             return $this->successResponse([
                 'user' => new UserResource($user),
-                'profile' => $profile
+                'profile' => $profile,
+                'permissions' => $permissions
             ]);
         } catch (\Throwable $e) {
             Log::error('Me failed', [
