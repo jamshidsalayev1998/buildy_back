@@ -123,7 +123,7 @@ class EmployeeController extends Controller
 
             if ($request->hasFile('image')) {
                 $path = $request->file('image')->store('users', 'public');
-                $user->image_path = $path;
+                $user->image = $path;
                 $user->save();
             }
 
@@ -147,7 +147,7 @@ class EmployeeController extends Controller
                 'status' => $request->status,
                 'notes' => $request->notes,
                 'created_by' => $authUser->id,
-                'image_path' => $path
+                'image' => $path
             ]);
 
             DB::commit();
@@ -198,12 +198,13 @@ class EmployeeController extends Controller
 
             if ($request->hasFile('image')) {
                 // Delete old image if exists
-                if ($employee->user->image_path) {
-                    Storage::disk('public')->delete($employee->user->image_path);
+                if ($employee->user->image) {
+                    Storage::disk('public')->delete($employee->user->image);
                 }
 
                 $path = $request->file('image')->store('users', 'public');
-                $employee->user->update(['image_path' => $path]);
+                $employee->user->update(['image' => $path]);
+                $employee->update(['image' => $path]);
             }
 
             // Update employee
@@ -257,8 +258,8 @@ class EmployeeController extends Controller
             DB::beginTransaction();
 
             // Delete user image if exists
-            if ($employee->user->image_path) {
-                Storage::disk('public')->delete($employee->user->image_path);
+            if ($employee->user->image) {
+                Storage::disk('public')->delete($employee->user->image);
             }
 
             // Soft delete both employee and user

@@ -110,7 +110,7 @@ class AdminController extends Controller
 
             if ($request->hasFile('image')) {
                 $path = $request->file('image')->store('users', 'public');
-                $user->image_path = $path;
+                $user->image = $path;
                 $user->save();
             }
 
@@ -133,7 +133,7 @@ class AdminController extends Controller
                 'monthly_salary' => $request->monthly_salary,
                 'status' => $request->status,
                 'notes' => $request->notes,
-                'image_path' => $path
+                'image' => $path
             ]);
 
             DB::commit();
@@ -188,13 +188,14 @@ class AdminController extends Controller
                 }
 
                 if ($request->hasFile('image')) {
-                    if ($admin->user->image_path) {
-                        Storage::disk('public')->delete($admin->user->image_path);
+                    if ($admin->user->image) {
+                        Storage::disk('public')->delete($admin->user->image);
                     }
-                    $userData['image_path'] = $request->file('image')->store('users', 'public');
+                    $userData['image'] = $request->file('image')->store('users', 'public');
                 }
 
                 $admin->user->update($userData);
+                $admin->update(['image' => $userData['image']]);
             }
 
             // Update admin
@@ -240,8 +241,8 @@ class AdminController extends Controller
             DB::beginTransaction();
 
             // Delete user image if exists
-            if ($admin->user->image_path) {
-                Storage::disk('public')->delete($admin->user->image_path);
+            if ($admin->user->image) {
+                Storage::disk('public')->delete($admin->user->image);
             }
 
             // Delete user (will cascade delete admin due to foreign key constraint)
