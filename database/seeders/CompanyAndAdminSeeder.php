@@ -62,7 +62,7 @@ class CompanyAndAdminSeeder extends Seeder
             if(Company::where('name', $companyData['name'])->exists()) {
                 continue;
             }
-            if(User::where('phone', $companyData['phone'])->exists()) {
+            if(User::where('phone', $companyData['admin_phone'])->exists()) {
                 continue;
             }
             // Kompaniyani yaratamiz
@@ -211,7 +211,7 @@ class CompanyAndAdminSeeder extends Seeder
                 "Parol: %s\n" .
                 "------------------------\n",
                 $company->name,
-                $adminPhone, $password, // Admin
+                $companyData['admin_phone'], $password, // Admin
                 $managerPhone, $password, // Manager
                 $plannerPhone, $password, // Planner
                 $employeePhone, $password  // Employee
@@ -222,7 +222,7 @@ class CompanyAndAdminSeeder extends Seeder
             // Xavfsizlik uchun logga ham yozamiz
             Log::info('Admin yaratildi', [
                 'company' => $company->name,
-                'phone' => $adminPhone,
+                'phone' => $companyData['admin_phone'],
                 'password' => $password
             ]);
         }
