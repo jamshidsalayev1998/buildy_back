@@ -32,7 +32,7 @@ class CompanyAndAdminSeeder extends Seeder
             [
                 'name' => 'ABC Company',
                 'address' => 'Toshkent sh., Chilonzor tumani',
-                'phone' => '+998901234567',
+                'phone' => '+998900000000',
                 'email' => 'abc@company.uz',
                 'description' => 'ABC kompaniyasi tavsifi',
                 'status' => true
@@ -40,7 +40,7 @@ class CompanyAndAdminSeeder extends Seeder
             [
                 'name' => 'XYZ Industries',
                 'address' => 'Toshkent sh., Yunusobod tumani',
-                'phone' => '+998901234568',
+                'phone' => '+998900000001',
                 'email' => 'xyz@company.uz',
                 'description' => 'XYZ kompaniyasi tavsifi',
                 'status' => true
@@ -48,7 +48,7 @@ class CompanyAndAdminSeeder extends Seeder
             [
                 'name' => 'Tech Solutions',
                 'address' => 'Toshkent sh., Mirzo Ulug\'bek tumani',
-                'phone' => '+998901234569',
+                'phone' => '+998900000002',
                 'email' => 'tech@company.uz',
                 'description' => 'Tech Solutions kompaniyasi tavsifi',
                 'status' => true
@@ -75,9 +75,8 @@ class CompanyAndAdminSeeder extends Seeder
             $password = 'password123';
 
             // Admin uchun
-            $adminPhone = $generatePhone();
             $user = User::create([
-                'phone' => $adminPhone,
+                'phone' => $companyData['phone'],
                 'password' => Hash::make($password),
             ]);
 
