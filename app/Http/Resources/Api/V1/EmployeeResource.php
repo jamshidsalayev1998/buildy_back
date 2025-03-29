@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\V1;
 
+use App\Http\Resources\CompanyResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,6 +29,9 @@ class EmployeeResource extends JsonResource
             'balance' => $this->balance,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'company' => $this->whenLoaded('company', function () {
+                return new CompanyResource($this->company);
+            }),
         ];
     }
 }

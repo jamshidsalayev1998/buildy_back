@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
+use App\Http\Resources\AdminResource;
+use App\Http\Resources\Api\V1\EmployeeResource;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponse;
@@ -87,6 +89,33 @@ class AuthController extends Controller
                 'Chiqish qilishda xatolik yuz berdi',
                 500
             );
+        }
+    }
+
+    public function me(Request $request)
+    {
+        $user = $request->user();
+        $profile = null;
+        if($user->hasRole('superadmin')) {
+            $profile = null;
+        }
+        elseif($user->hasRole('admin')) {
+            $profile = new AdminResource($user->admin);
+            $profile->load('company');
+        } else{
+            $profile = new EmployeeResource($user->employee);
+            $profile->load('company');
+        }
+        try {
+            return $this->successResponse([
+                'user' => new UserResource($user),
+                'profile' => $profile
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Me failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
     }
 }
