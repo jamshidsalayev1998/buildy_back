@@ -66,7 +66,14 @@ class CompanyAndAdminSeeder extends Seeder
                 continue;
             }
             // Kompaniyani yaratamiz
-            $company = Company::create($companyData);
+            $company = Company::create([
+                'name' => $companyData['name'],
+                'address' => $companyData['address'],
+                'phone' => $companyData['phone'],
+                'email' => $companyData['email'],
+                'description' => $companyData['description'],
+                'status' => $companyData['status']
+            ]);
 
             // Random telefon raqami generatsiya qilish uchun funksiya
             $generatePhone = function() {
