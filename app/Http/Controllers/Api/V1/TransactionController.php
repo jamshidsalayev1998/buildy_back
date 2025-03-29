@@ -29,7 +29,6 @@ class TransactionController extends Controller
                 ->visibleToUser()
                 ->latest()
                 ->paginate(request('per_page', 15));
-                return $transactions;
 
             Log::info('Transactions list retrieved', [
                 'user_id' => auth()->id(),
