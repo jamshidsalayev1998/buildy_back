@@ -25,13 +25,15 @@ class Employee extends Model
         'hourly_rate',
         'monthly_salary',
         'status',
-        'notes'
+        'notes',
+        'balance'
     ];
 
     protected $casts = [
         'birth_date' => 'date',
         'hourly_rate' => 'decimal:2',
-        'monthly_salary' => 'decimal:2'
+        'monthly_salary' => 'decimal:2',
+        'balance' => 'decimal:2'
     ];
 
     // Munosabatlar

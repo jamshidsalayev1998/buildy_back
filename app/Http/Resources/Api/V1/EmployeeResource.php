@@ -25,6 +25,7 @@ class EmployeeResource extends JsonResource
             'monthly_salary' => $this->when($this->work_type === 'fixed', $this->monthly_salary),
             'status' => $this->status,
             'notes' => $this->notes,
+            'balance' => $this->balance,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];

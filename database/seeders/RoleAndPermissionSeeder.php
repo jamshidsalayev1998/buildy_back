@@ -90,6 +90,11 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::create(['name' => 'delete transaction categories']);
         }
 
+        // only admin
+        if (!Permission::where('name', 'balance-transfer')->exists()) {
+            Permission::create(['name' => 'balance-transfer']);
+        }
+
         // Create roles and assign permissions
         // Superadmin
         if (!Role::where('name', 'superadmin')->exists()) {
@@ -114,7 +119,8 @@ class RoleAndPermissionSeeder extends Seeder
             'view transactions',
             'create transactions',
             'edit transactions',
-            'delete transactions'
+            'delete transactions',
+            'balance-transfer'
         ]);
 
         // Manager

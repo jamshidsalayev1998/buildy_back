@@ -42,6 +42,7 @@ class AdminResource extends JsonResource
                 ];
             }),
             'company' => $this->whenLoaded('company'),
+            'balance' => $this->balance,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];

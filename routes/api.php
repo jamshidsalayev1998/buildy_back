@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/v1/transaction-categories.php';
     require __DIR__ . '/api/v1/transactions.php';
     require __DIR__ . '/api/v1/employees.php';
+    require __DIR__ . '/api/v1/balance_transfer.php';
 });
 
 

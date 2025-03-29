@@ -17,11 +17,13 @@ class Company extends Model
         'phone',
         'email',
         'description',
-        'status'
+        'status',
+        'balance'
     ];
 
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'balance' => 'decimal:2'
     ];
 
     public function users(): HasMany

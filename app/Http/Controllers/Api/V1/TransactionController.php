@@ -8,6 +8,9 @@ use App\Http\Requests\Api\V1\Transaction\UpdateTransactionRequest;
 use App\Http\Resources\Api\V1\TransactionCollection;
 use App\Http\Resources\Api\V1\TransactionResource;
 use App\Models\Transaction;
+use App\Models\Company;
+use App\Models\BalanceHistory;
+use App\Models\TransactionCategory;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -102,52 +105,91 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request): JsonResponse
     {
         try {
+            /** @var \App\Models\User */
+            $user = auth()->user();
             $this->authorize('create', Transaction::class);
-
             DB::beginTransaction();
 
-            $data = $request->validated();
-            $data['user_id'] = auth()->id();
+            if ($user->hasRole('admin')) {
+                $company = Company::find($user->admin->company_id);
+            } elseif ($user->hasRole('employee') || $user->hasRole('manager') || $user->hasRole('planner')) {
+                $company = Company::find($user->employee->company_id);
+            }
+            $transactionCategory = TransactionCategory::find($request->transaction_category_id);
 
-            if ($request->hasFile('receipt_image')) {
-                $data['receipt_image_path'] = $request->file('receipt_image')
-                    ->store('receipts', 'public');
+            // Tranzaksiya yaratish
+            $transaction = Transaction::create([
+                'amount' => $request->amount,
+                'description' => $request->description,
+                'type' => $request->type,
+                'transaction_category_id' => $request->transaction_category_id,
+                'user_id' => $user->id,
+                'type' => $transactionCategory->type
+            ]);
+
+            if ($transactionCategory->type === 'INCOME') {
+                $company->increment('balance', $request->amount);
+
+                BalanceHistory::create([
+                    'from_type' => null,
+                    'from_id' => null,
+                    'to_type' => Company::class,
+                    'to_id' => $company->id,
+                    'amount' => $request->amount,
+                    'description' => $request->description,
+                    'transaction_id' => $transaction->id
+                ]);
+            } else { // EXPENSE
+                // Balansni tekshirish
+                $userBalance = $user->hasRole('admin')
+                    ? $user->admin->balance
+                    : $user->employee->balance;
+
+                if ($userBalance < $request->amount) {
+                    DB::rollBack();
+                    return $this->errorResponse(
+                        'Xarajat qilish uchun balans yetarli emas',
+                        400
+                    );
+                }
+
+                if ($user->hasRole('admin')) {
+                    $user->admin->decrement('balance', $request->amount);
+                    $fromModel = $user->admin;
+                } else {
+                    $user->employee->decrement('balance', $request->amount);
+                    $fromModel = $user->employee;
+                }
+
+                BalanceHistory::create([
+                    'from_type' => get_class($fromModel),
+                    'from_id' => $fromModel->id,
+                    'to_type' => Company::class,
+                    'to_id' => $company->id,
+                    'amount' => $request->amount,
+                    'description' => $request->description,
+                    'transaction_id' => $transaction->id
+                ]);
             }
 
-            $transaction = Transaction::create($data);
-
             DB::commit();
-
-            Log::info('Transaction created', [
-                'user_id' => auth()->id(),
-                'transaction_id' => $transaction->id,
-                'amount' => $transaction->amount,
-            ]);
-
             return response()->json([
                 'success' => true,
-                'data' => new TransactionResource($transaction->load(['user', 'transactionCategory'])),
-                'message' => 'Kirim-chiqim muvaffaqiyatli yaratildi'
+                'data' => new TransactionResource($transaction),
+                'message' => 'Tranzaksiya muvaffaqiyatli yaratildi'
             ], 201);
-        } catch (AuthorizationException $e) {
-            Log::warning('Unauthorized transaction creation attempt', [
-                'user_id' => auth()->id()
-            ]);
-
-            throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create transaction', [
                 'user_id' => auth()->id(),
                 'data' => $request->except('receipt_image'),
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
 
-            return $this->errorResponse(
-                'Kirim-chiqim yaratishda xatolik yuz berdi',
-                500
-            );
+            return $this->errorResponse('Tranzaksiya yaratishda xatolik yuz berdi', 500);
         }
     }
 
