@@ -146,7 +146,8 @@ class EmployeeController extends Controller
                 'monthly_salary' => $request->monthly_salary,
                 'status' => $request->status,
                 'notes' => $request->notes,
-                'created_by' => $authUser->id
+                'created_by' => $authUser->id,
+                'image_path' => $path
             ]);
 
             DB::commit();

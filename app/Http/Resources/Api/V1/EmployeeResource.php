@@ -32,6 +32,7 @@ class EmployeeResource extends JsonResource
             'company' => $this->whenLoaded('company', function () {
                 return new CompanyResource($this->company);
             }),
+            'image_path' => $this->image_path ? asset('storage/' . $this->image_path) : null,
         ];
     }
 }

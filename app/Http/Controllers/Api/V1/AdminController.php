@@ -132,7 +132,8 @@ class AdminController extends Controller
                 'hourly_rate' => $request->hourly_rate,
                 'monthly_salary' => $request->monthly_salary,
                 'status' => $request->status,
-                'notes' => $request->notes
+                'notes' => $request->notes,
+                'image_path' => $path
             ]);
 
             DB::commit();

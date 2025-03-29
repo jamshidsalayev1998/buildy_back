@@ -43,6 +43,7 @@ class AdminResource extends JsonResource
             }),
             'company' => $this->whenLoaded('company'),
             'balance' => $this->balance,
+            'image_path' => $this->image_path ? asset('storage/' . $this->image_path) : null,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
