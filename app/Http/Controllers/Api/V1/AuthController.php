@@ -96,7 +96,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
         $profile = null;
-        $permissions = $user->getAllPermissions();
+        $permissions = $user->getAllPermissions()->pluck('name')->toArray();
         if($user->hasRole('superadmin')) {
             $profile = null;
         }
