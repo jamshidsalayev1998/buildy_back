@@ -34,13 +34,8 @@ class Company extends Model
         return $this->hasMany(Admin::class);
     }
 
-    public function managers(): HasMany
+    public function employees(): HasMany
     {
-        return $this->hasMany(Manager::class);
-    }
-
-    public function planners(): HasMany
-    {
-        return $this->hasMany(Planner::class);
+        return $this->hasMany(Employee::class);
     }
 }

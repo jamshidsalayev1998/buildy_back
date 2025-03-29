@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Planner\StorePlannerRequest;
-use App\Http\Requests\Api\V1\Planner\UpdatePlannerRequest;
-use App\Http\Resources\Api\V1\PlannerCollection;
-use App\Http\Resources\Api\V1\PlannerResource;
-use App\Models\Planner;
+use App\Http\Requests\Api\V1\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Api\V1\Employee\UpdateEmployeeRequest;
+use App\Http\Resources\Api\V1\EmployeeCollection;
+use App\Http\Resources\Api\V1\EmployeeResource;
+use App\Models\Employee;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -17,105 +17,102 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Auth\Access\AuthorizationException;
 
-class PlannerController extends Controller
+class EmployeeController extends Controller
 {
     use ApiResponse;
 
     /**
-     * Get all planners with pagination
+     * Get all employees with pagination
      */
     public function index(): JsonResponse
     {
         try {
-            $planners = Planner::with(['user', 'company'])
+            $employees = Employee::with(['user', 'company'])
                 ->visibleToUser()
                 ->latest()
                 ->paginate(request('per_page', 15));
 
-            Log::info('Planners list retrieved', [
+            Log::info('Employees list retrieved', [
                 'user_id' => auth()->id(),
-                'total_count' => $planners->total()
+                'total_count' => $employees->total()
             ]);
 
             return response()->json([
                 'success' => true,
-                'data' => new PlannerCollection($planners),
-                'message' => 'Plannerlar ro\'yxati'
+                'data' => new EmployeeCollection($employees),
+                'message' => 'Xodimlar ro\'yxati'
             ]);
         } catch (\Throwable $e) {
-            Log::error('Failed to get planners list', [
+            Log::error('Failed to get employees list', [
                 'user_id' => auth()->id(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
             return $this->errorResponse(
-                'Plannerlar ro\'yxatini olishda xatolik yuz berdi',
+                'Xodimlar ro\'yxatini olishda xatolik yuz berdi',
                 500
             );
         }
     }
 
     /**
-     * Get single planner by ID
+     * Get single employee by ID
      */
-    public function show(Planner $planner): JsonResponse
+    public function show(Employee $employee): JsonResponse
     {
         try {
-            $this->authorize('view', $planner);
-
-            // User ma'lumotlarini yuklash
-            $planner->load('user');
-
-            Log::info('Planner details retrieved', [
-                'user_id' => auth()->id(),
-                'planner_id' => $planner->id
-            ]);
+            $this->authorize('view', $employee);
 
             return response()->json([
                 'success' => true,
-                'data' => new PlannerResource($planner),
-                'message' => 'Planner ma\'lumotlari'
+                'data' => new EmployeeResource($employee->load('user')),
+                'message' => 'Xodim ma\'lumotlari'
             ]);
         } catch (AuthorizationException $e) {
-            Log::warning('Unauthorized planner view attempt', [
+            Log::warning('Unauthorized employee view attempt', [
                 'user_id' => auth()->id(),
-                'planner_id' => $planner->id
+                'employee_id' => $employee->id
             ]);
 
             throw $e;
         } catch (\Throwable $e) {
-            Log::error('Failed to get planner details', [
+            Log::error('Failed to get employee details', [
                 'user_id' => auth()->id(),
-                'planner_id' => $planner->id ?? null,
+                'employee_id' => $employee->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
             return $this->errorResponse(
-                'Planner ma\'lumotlarini olishda xatolik yuz berdi',
+                'Xodim ma\'lumotlarini olishda xatolik yuz berdi',
                 500
             );
         }
     }
 
     /**
-     * Create new planner
+     * Create new employee
      */
-    public function store(StorePlannerRequest $request): JsonResponse
+    public function store(StoreEmployeeRequest $request): JsonResponse
     {
         try {
-
+            // $this->authorize('create', $request->position);
             /** @var \App\Models\User */
             $authUser = auth()->user();
             $companyId = null;
 
             if ($authUser->hasRole('admin')) {
                 $companyId = $authUser->admin->company_id;
-            } elseif ($authUser->hasRole('manager')) {
-                $companyId = $authUser->manager->company_id;
+            } elseif ($authUser->hasRole('superadmin')) {
+                $companyId = $request->company_id;
             }
-
+            elseif ($authUser->hasRole('manager')) {
+                $companyId = $authUser->employee->company_id;
+            }
+            elseif ($authUser->hasRole('planner')) {
+                $companyId = $authUser->employee->company_id;
+            }
             DB::beginTransaction();
 
             // Create user
@@ -130,11 +127,11 @@ class PlannerController extends Controller
                 $user->save();
             }
 
-            // Assign planner role
-            $user->assignRole('planner');
+            // Assign role based on position
+            $user->assignRole($request->position);
 
-            // Create planner
-            $planner = Planner::create([
+            // Create employee
+            $employee = Employee::create([
                 'user_id' => $user->id,
                 'company_id' => $companyId,
                 'first_name' => $request->first_name,
@@ -148,32 +145,33 @@ class PlannerController extends Controller
                 'hourly_rate' => $request->hourly_rate,
                 'monthly_salary' => $request->monthly_salary,
                 'status' => $request->status,
-                'notes' => $request->notes
+                'notes' => $request->notes,
+                'created_by' => $authUser->id
             ]);
 
             DB::commit();
 
-            Log::info('Planner created', [
+            Log::info('Employee created', [
                 'creator_id' => auth()->id(),
-                'planner_id' => $planner->id,
-                'company_id' => $planner->company_id,
-                'phone' => $planner->user->phone
+                'employee_id' => $employee->id,
+                'company_id' => $employee->company_id,
+                'phone' => $employee->user->phone
             ]);
 
             return response()->json([
                 'success' => true,
-                'data' => new PlannerResource($planner->load('user')),
-                'message' => 'Planner muvaffaqiyatli yaratildi'
+                'data' => new EmployeeResource($employee->load('user')),
+                'message' => 'Xodim muvaffaqiyatli yaratildi'
             ], 201);
         } catch (AuthorizationException $e) {
-            Log::warning('Unauthorized planner creation attempt', [
+            Log::warning('Unauthorized employee creation attempt', [
                 'user_id' => auth()->id()
             ]);
 
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to create planner', [
+            Log::error('Failed to create employee', [
                 'creator_id' => auth()->id(),
                 'data' => $request->except('password'),
                 'error' => $e->getMessage(),
@@ -181,130 +179,121 @@ class PlannerController extends Controller
             ]);
 
             return $this->errorResponse(
-                'Planner yaratishda xatolik yuz berdi',
+                'Xodim yaratishda xatolik yuz berdi',
                 500
             );
         }
     }
 
     /**
-     * Update planner
+     * Update employee
      */
-    public function update(UpdatePlannerRequest $request, Planner $planner): JsonResponse
+    public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
         try {
-            $this->authorize('update', $planner);
+            $this->authorize('update', $employee);
 
             DB::beginTransaction();
 
-            // Update user
-            if ($request->has('phone') || $request->has('password') || $request->hasFile('image')) {
-                $userData = [];
-
-                if ($request->has('phone')) {
-                    $userData['phone'] = $request->phone;
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($employee->user->image_path) {
+                    Storage::disk('public')->delete($employee->user->image_path);
                 }
 
-                if ($request->has('password')) {
-                    $userData['password'] = Hash::make($request->password);
-                }
-
-                if ($request->hasFile('image')) {
-                    if ($planner->user->image_path) {
-                        Storage::disk('public')->delete($planner->user->image_path);
-                    }
-                    $userData['image_path'] = $request->file('image')->store('users', 'public');
-                }
-
-                $planner->user->update($userData);
+                $path = $request->file('image')->store('users', 'public');
+                $employee->user->update(['image_path' => $path]);
             }
 
-            // Update planner
-            $planner->update($request->except(['phone', 'password', 'image']));
+            // Update employee
+            $employee->update($request->except(['password', 'image']));
 
             DB::commit();
 
-            Log::info('Planner updated', [
+            Log::info('Employee updated', [
                 'editor_id' => auth()->id(),
-                'planner_id' => $planner->id,
-                'updated_fields' => array_keys($request->except(['phone', 'password', 'image']))
+                'employee_id' => $employee->id,
+                'company_id' => $employee->company_id
             ]);
 
             return response()->json([
                 'success' => true,
-                'data' => new PlannerResource($planner->load('user')),
-                'message' => 'Planner ma\'lumotlari yangilandi'
+                'data' => new EmployeeResource($employee->load('user')),
+                'message' => 'Xodim ma\'lumotlari yangilandi'
             ]);
         } catch (AuthorizationException $e) {
-            Log::warning('Unauthorized planner update attempt', [
+            Log::warning('Unauthorized employee update attempt', [
                 'user_id' => auth()->id(),
-                'planner_id' => $planner->id
+                'employee_id' => $employee->id
             ]);
 
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to update planner', [
+            Log::error('Failed to update employee', [
                 'editor_id' => auth()->id(),
-                'planner_id' => $planner->id,
+                'employee_id' => $employee->id,
                 'data' => $request->except('password'),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
             return $this->errorResponse(
-                'Planner ma\'lumotlarini yangilashda xatolik yuz berdi',
+                'Xodim ma\'lumotlarini yangilashda xatolik yuz berdi',
                 500
             );
         }
     }
 
     /**
-     * Delete planner
+     * Delete employee
      */
-    public function destroy(Planner $planner): JsonResponse
+    public function destroy(Employee $employee): JsonResponse
     {
         try {
-            $this->authorize('delete', $planner);
+            $this->authorize('delete', $employee);
 
             DB::beginTransaction();
 
             // Delete user image if exists
-            if ($planner->user->image_path) {
-                Storage::disk('public')->delete($planner->user->image_path);
+            if ($employee->user->image_path) {
+                Storage::disk('public')->delete($employee->user->image_path);
             }
 
-            // Delete user (will cascade delete planner due to foreign key constraint)
-            $planner->user->delete();
+            // Soft delete both employee and user
+            $employee->status = 'inactive';
+            $employee->save();
+            $employee->delete();
+            $employee->user->delete();
 
             DB::commit();
 
-            Log::info('Planner deleted', [
+            Log::info('Employee soft deleted', [
                 'deleter_id' => auth()->id(),
-                'planner_id' => $planner->id
+                'employee_id' => $employee->id
             ]);
 
             return $this->successResponse(
-                message: 'Planner o\'chirildi'
+                message: 'Xodim arxivlandi'
             );
         } catch (AuthorizationException $e) {
-            Log::warning('Unauthorized planner deletion attempt', [
+            Log::warning('Unauthorized employee deletion attempt', [
                 'user_id' => auth()->id(),
-                'planner_id' => $planner->id
+                'employee_id' => $employee->id
             ]);
 
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to delete planner', [
+            Log::error('Failed to soft delete employee', [
                 'deleter_id' => auth()->id(),
-                'planner_id' => $planner->id,
+                'employee_id' => $employee->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
             return $this->errorResponse(
-                'Plannerni o\'chirishda xatolik yuz berdi',
+                'Xodimni arxivlashda xatolik yuz berdi',
                 500
             );
         }

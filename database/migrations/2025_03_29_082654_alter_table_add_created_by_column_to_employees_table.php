@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('type');
+        Schema::table('employees', function (Blueprint $table) {
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
         });
     }
 
@@ -21,8 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->enum('type', ['income', 'expense'])->nullable();
+        Schema::table('employees', function (Blueprint $table) {
+            $table->dropForeign(['created_by']);
+            $table->dropColumn('created_by');
         });
     }
 };
